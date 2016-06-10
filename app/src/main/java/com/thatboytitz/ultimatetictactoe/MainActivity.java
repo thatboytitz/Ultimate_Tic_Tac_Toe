@@ -691,6 +691,8 @@ public class MainActivity extends AppCompatActivity {
             }
             ultGame.setTile(i,0);
         }
+        boolean playerTurn = random.nextBoolean();
+        if(!playerTurn) CPUTurn();
     }
 }
 
