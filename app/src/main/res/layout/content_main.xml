@@ -882,27 +882,4 @@
                 android:onClick="MyClickFunction"/>
         </LinearLayout>
     </LinearLayout>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/linearLayout"
-        android:weightSum="1">
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal" />
-
-        <Button
-            android:layout_width="154dp"
-            android:layout_height="wrap_content"
-            android:text="Reset"
-            android:id="@+id/ResetButton"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.55"
-            android:onClick="Reset"
-            android:nestedScrollingEnabled="false" />
-    </LinearLayout>
 </RelativeLayout>
