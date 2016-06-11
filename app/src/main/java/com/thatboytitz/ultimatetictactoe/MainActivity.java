@@ -86,11 +86,15 @@ public class MainActivity extends AppCompatActivity {
             Reset();
             return true;
         }
-
         if (id == R.id.item2) {
             is2Player = true;
             Log.d("debug", "2 player mode = " + is2Player);
             item.setChecked(true);
+            Reset();
+            return true;
+        }
+
+        if (id == R.id.action_settings) {
             Reset();
             return true;
         }
@@ -119,12 +123,15 @@ public class MainActivity extends AppCompatActivity {
             player1Turn = true;
         }
 
-        if(!GameOver()) {
-            if(!is2Player)
-                CPUTurn();
+        if(!GameOver() && !is2Player) {
+            CPUTurn();
         }
-
-        else DrawBoard();
+        else {
+            if(!ultGame.emptyTile(currentBoard) && is2Player){
+                currentBoard = -1;
+            }
+            DrawBoard();
+        }
     }
 
     public void PlayerTurn(String id, String mark, int value) {
@@ -132,12 +139,9 @@ public class MainActivity extends AppCompatActivity {
         Integer tile = Integer.parseInt(id.substring(7,8));
         grid[board][tile].setText(mark);
         ultGame.miniBoard.get(board).setTile(tile,value);
-        previousBoard = currentBoard;
+        previousBoard = board;
+        choiceTile = tile;
         currentBoard = tile;
-
-        if(!ultGame.emptyTile(currentBoard) && is2Player){
-            currentBoard = -1;
-        }
     }
 
     public void CPUTurn(){
@@ -664,6 +668,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void DrawBoard() {
         //if (DEBUG) currentBoard = -1;
+        Log.d("debug", "currentBoard: " + currentBoard);
         if (GameOver()) {
             for(int i = 0; i < 9; i++) {
                 for(int j = 0; j < 9; j++){
@@ -701,18 +706,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Reset(View view) {
-//        currentBoard = -1;
-//        previousBoard = -1;
-//        choiceTile = 0;
-//        for(int i = 0; i < 9; i++) {
-//            for(int j = 0; j < 9; j++){
-//                grid[i][j].setClickable(true);
-//                grid[i][j].setText("");
-//                grid[i][j].getBackground().setColorFilter(Color.LTGRAY, PorterDuff.Mode.MULTIPLY);
-//                ultGame.miniBoard.get(i).setTile(j,0);
-//            }
-//            ultGame.setTile(i,0);
-//        }
         Reset();
     }
 
@@ -730,7 +723,7 @@ public class MainActivity extends AppCompatActivity {
             ultGame.setTile(i,0);
         }
         boolean playerTurn = random.nextBoolean();
-        if(!playerTurn) CPUTurn();
+        if(!playerTurn && !is2Player) CPUTurn();
     }
 }
 
