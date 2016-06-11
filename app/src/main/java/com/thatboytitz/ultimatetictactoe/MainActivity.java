@@ -4,14 +4,12 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -29,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private int choiceTile;
     private static final int NUM_TILES = 9;
     private static final String button = "button";
+    private boolean is2Player = false;
+    private boolean player1Turn = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu, menu);
         return true;
     }
 
@@ -79,7 +79,18 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.item1) {
+            is2Player = false;
+            Log.d("debug", "2 player mode = " + is2Player);
+            item.setChecked(true);
+            Reset();
+            return true;
+        }
+
+        if (id == R.id.item2) {
+            is2Player = true;
+            Log.d("debug", "2 player mode = " + is2Player);
+            item.setChecked(true);
             Reset();
             return true;
         }
@@ -92,14 +103,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void DoAction(String id) {
+        String mark;
+        int value;
+        if (player1Turn) {
+            mark = "O";
+            value = 1;
+            PlayerTurn(id, mark, value);
+            if(is2Player)
+                player1Turn = false;
+        }
+        else {
+            mark = "X";
+            value = -1;
+            PlayerTurn(id, mark, value);
+            player1Turn = true;
+        }
+
+        if(!GameOver()) {
+            if(!is2Player)
+                CPUTurn();
+        }
+
+        else DrawBoard();
+    }
+
+    public void PlayerTurn(String id, String mark, int value) {
         Integer board = Integer.parseInt(id.substring(6,7));
         Integer tile = Integer.parseInt(id.substring(7,8));
-        grid[board][tile].setText("O");
-        ultGame.miniBoard.get(board).setTile(tile,1);
+        grid[board][tile].setText(mark);
+        ultGame.miniBoard.get(board).setTile(tile,value);
         previousBoard = currentBoard;
         currentBoard = tile;
-        if(!GameOver()) CPUTurn();
-        else DrawBoard();
+
+        if(!ultGame.emptyTile(currentBoard) && is2Player){
+            currentBoard = -1;
+        }
     }
 
     public void CPUTurn(){
